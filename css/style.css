@@ -1,19 +1,23 @@
-/* Reset and base styles */
+/* 重置和基础样式 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', 'Microsoft YaHei', sans-serif;
     background: linear-gradient(135deg, #1a2980, #26d0ce);
     color: #fff;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .container {
@@ -21,46 +25,46 @@ body {
     width: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 20px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     border: 3px solid #ff9800;
 }
 
-/* Header */
+/* 头部 */
 header {
     text-align: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
     border-bottom: 2px solid #ff9800;
 }
 
 h1 {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 2.5rem;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.2rem;
     color: #ff9800;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     text-shadow: 3px 3px 0 #000;
 }
 
 h1 i {
-    margin-right: 15px;
+    margin-right: 10px;
     color: #4CAF50;
 }
 
 .subtitle {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: #aaa;
     font-style: italic;
 }
 
-/* Score board */
+/* 分数板 */
 .score-board {
     display: flex;
     justify-content: space-around;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 12px;
+    margin-bottom: 15px;
     border: 2px solid #4CAF50;
 }
 
@@ -71,38 +75,40 @@ h1 i {
 }
 
 .score-label {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #aaa;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .score-value {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 1.8rem;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.6rem;
     color: #ffeb3b;
     text-shadow: 2px 2px 0 #000;
 }
 
-/* Game container */
+/* 游戏容器 */
 .game-container {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border-radius: 10px;
     overflow: hidden;
     border: 3px solid #333;
     background-color: #87CEEB;
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+    touch-action: none;
 }
 
 #gameCanvas {
     display: block;
     width: 100%;
+    height: auto;
     background-color: #87CEEB;
 }
 
-/* Game overlays */
+/* 游戏遮罩层 */
 .game-overlay {
     position: absolute;
     top: 0;
@@ -115,68 +121,70 @@ h1 i {
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 30px;
+    padding: 20px;
     z-index: 10;
 }
 
 .game-overlay h2 {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 2.5rem;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2rem;
     color: #ff9800;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-shadow: 3px 3px 0 #000;
 }
 
 .game-overlay p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
+    font-size: 1rem;
+    margin-bottom: 20px;
     color: #ddd;
-    max-width: 500px;
+    max-width: 400px;
 }
 
 .controls-info {
     background-color: rgba(255, 152, 0, 0.2);
     border-radius: 10px;
-    padding: 15px;
-    margin: 20px 0;
+    padding: 12px;
+    margin: 15px 0;
     border: 1px solid #ff9800;
+    width: 100%;
+    max-width: 500px;
 }
 
 .control-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 10px 0;
-    font-size: 1.1rem;
+    margin: 8px 0;
+    font-size: 0.95rem;
 }
 
 .control-item i {
     color: #4CAF50;
-    margin-right: 10px;
-    font-size: 1.3rem;
+    margin-right: 8px;
+    font-size: 1.1rem;
 }
 
 .final-score {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 25px 0;
+    margin: 20px 0;
     background-color: rgba(255, 235, 59, 0.1);
-    padding: 15px 30px;
+    padding: 12px 25px;
     border-radius: 10px;
     border: 2px solid #ffeb3b;
 }
 
 .final-score span:first-child {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: #aaa;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
-/* Buttons */
+/* 按钮样式 */
 .btn {
-    padding: 15px 30px;
-    font-size: 1.2rem;
+    padding: 12px 25px;
+    font-size: 1rem;
     font-weight: bold;
     border: none;
     border-radius: 50px;
@@ -185,22 +193,25 @@ h1 i {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 10px;
+    margin: 8px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    touch-action: manipulation;
 }
 
 .btn i {
-    margin-right: 10px;
+    margin-right: 8px;
 }
 
 .start-btn {
     background: linear-gradient(to right, #4CAF50, #8BC34A);
     color: white;
     box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+    font-size: 1.2rem;
+    padding: 15px 40px;
 }
 
-.start-btn:hover {
+.start-btn:hover, .start-btn:active {
     background: linear-gradient(to right, #45a049, #7cb342);
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
@@ -210,78 +221,137 @@ h1 i {
     background: linear-gradient(to right, #2196F3, #03A9F4);
     color: white;
     box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+    font-size: 1.2rem;
+    padding: 15px 40px;
 }
 
-.restart-btn:hover {
+.restart-btn:hover, .restart-btn:active {
     background: linear-gradient(to right, #1976D2, #0288D1);
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(33, 150, 243, 0.6);
+}
+
+/* 控制按钮 */
+.controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
 .control-btn {
     background: linear-gradient(to right, #9C27B0, #673AB7);
     color: white;
     box-shadow: 0 5px 10px rgba(156, 39, 176, 0.3);
-    padding: 12px 25px;
-    font-size: 1rem;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    min-width: 100px;
 }
 
-.control-btn:hover {
+.control-btn:hover, .control-btn:active {
     background: linear-gradient(to right, #7B1FA2, #512DA8);
     transform: translateY(-2px);
 }
 
-.close-btn {
+/* 跳跃按钮 - 更显眼 */
+.jump-btn {
     background: linear-gradient(to right, #f44336, #E91E63);
-    color: white;
-    padding: 12px 25px;
-    font-size: 1rem;
+    box-shadow: 0 5px 15px rgba(244, 67, 54, 0.5);
+    min-width: 120px;
+    font-size: 1.1rem;
 }
 
-.close-btn:hover {
+.jump-btn:hover, .jump-btn:active {
     background: linear-gradient(to right, #d32f2f, #C2185B);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(244, 67, 54, 0.7);
 }
 
-/* Controls */
-.controls {
+/* 飞镖按钮 */
+.dart-btn {
+    background: linear-gradient(to right, #FF5722, #FF9800);
+    box-shadow: 0 5px 15px rgba(255, 87, 34, 0.5);
+    min-width: 120px;
+}
+
+.dart-btn:hover, .dart-btn:active {
+    background: linear-gradient(to right, #E64A19, #F57C00);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 87, 34, 0.7);
+}
+
+/* 飞镖冷却显示 */
+.cooldown-container {
     display: flex;
+    align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 30px;
+    gap: 10px;
+    margin-bottom: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 2px solid #FF5722;
 }
 
-/* Instructions */
+.cooldown-container span {
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.cooldown-bar-bg {
+    width: 150px;
+    height: 20px;
+    background-color: #333;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.cooldown-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(to right, #4CAF50, #8BC34A);
+    transition: width 0.1s;
+}
+
+.cooldown-text {
+    font-size: 0.9rem;
+    color: #4CAF50;
+    font-weight: bold;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* 游戏说明面板 */
 .instructions {
     background-color: rgba(0, 0, 0, 0.8);
     border-radius: 15px;
-    padding: 25px;
-    margin-top: 20px;
+    padding: 20px;
+    margin-top: 15px;
     border: 2px solid #9C27B0;
 }
 
 .instructions h3 {
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Ma Shan Zheng', cursive;
     color: #9C27B0;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
     text-align: center;
 }
 
 .instructions h3 i {
-    margin-right: 10px;
+    margin-right: 8px;
 }
 
 .instructions ul {
     list-style-type: none;
-    margin: 20px 0;
-    padding-left: 20px;
+    margin: 15px 0;
+    padding-left: 15px;
 }
 
 .instructions li {
-    margin-bottom: 15px;
-    font-size: 1.1rem;
+    margin-bottom: 12px;
+    font-size: 1rem;
     line-height: 1.5;
 }
 
@@ -294,7 +364,7 @@ kbd {
     color: #ffeb3b;
     padding: 3px 8px;
     border-radius: 5px;
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Ma Shan Zheng', cursive;
     font-size: 0.9rem;
     border: 1px solid #666;
 }
@@ -302,25 +372,37 @@ kbd {
 .tip {
     background-color: rgba(255, 152, 0, 0.1);
     border-left: 4px solid #ff9800;
-    padding: 15px;
-    margin: 20px 0;
+    padding: 12px;
+    margin: 15px 0;
     border-radius: 0 5px 5px 0;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .tip i {
     color: #ffeb3b;
-    margin-right: 10px;
+    margin-right: 8px;
 }
 
-/* Footer */
+.close-btn {
+    background: linear-gradient(to right, #f44336, #E91E63);
+    color: white;
+    padding: 10px 25px;
+    font-size: 0.95rem;
+}
+
+.close-btn:hover, .close-btn:active {
+    background: linear-gradient(to right, #d32f2f, #C2185B);
+    transform: translateY(-2px);
+}
+
+/* 页脚 */
 footer {
     text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
+    margin-top: 20px;
+    padding-top: 15px;
     border-top: 1px solid #444;
     color: #aaa;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 footer i {
@@ -329,7 +411,7 @@ footer i {
 }
 
 .github-link {
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 .github-link a {
@@ -342,51 +424,22 @@ footer i {
     text-decoration: underline;
 }
 
-/* Responsive design */
+/* 响应式设计 - 手机优化 */
 @media (max-width: 768px) {
-    h1 {
-        font-size: 1.8rem;
-    }
-
-    .subtitle {
-        font-size: 1rem;
-    }
-
-    .score-value {
-        font-size: 1.4rem;
-    }
-
-    .game-overlay h2 {
-        font-size: 1.8rem;
-    }
-
-    .btn {
-        padding: 12px 20px;
-        font-size: 1rem;
-    }
-
-    .controls {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .control-btn {
-        width: 80%;
-    }
-}
-
-@media (max-width: 480px) {
     .container {
         padding: 15px;
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
     }
 
-    .score-board {
-        flex-direction: column;
-        gap: 15px;
+    .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .score-value {
+        font-size: 1.3rem;
     }
 
     .game-overlay h2 {
@@ -394,6 +447,130 @@ footer i {
     }
 
     .control-item {
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        padding: 10px 18px;
         font-size: 0.9rem;
+    }
+
+    .controls {
+        gap: 8px;
+    }
+
+    .control-btn {
+        min-width: 80px;
+        padding: 10px 15px;
+        font-size: 0.85rem;
+    }
+
+    .jump-btn, .dart-btn {
+        min-width: 90px;
+    }
+
+    .cooldown-bar-bg {
+        width: 100px;
+    }
+
+    .cooldown-container {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.3rem;
+    }
+
+    .score-board {
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .score-label {
+        font-size: 0.7rem;
+    }
+
+    .score-value {
+        font-size: 1.1rem;
+    }
+
+    .game-overlay h2 {
+        font-size: 1.3rem;
+    }
+
+    .game-overlay p {
+        font-size: 0.85rem;
+    }
+
+    .control-item {
+        font-size: 0.75rem;
+    }
+
+    .controls {
+        flex-wrap: wrap;
+    }
+
+    .control-btn {
+        min-width: 70px;
+        padding: 8px 12px;
+        font-size: 0.75rem;
+    }
+
+    .instructions li {
+        font-size: 0.9rem;
+    }
+
+    .cooldown-container {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .cooldown-bar-bg {
+        width: 100%;
+    }
+}
+
+/* 横屏优化 */
+@media (orientation: landscape) and (max-height: 500px) {
+    .container {
+        padding: 10px;
+    }
+
+    header {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    .score-board {
+        padding: 8px;
+        margin-bottom: 8px;
+    }
+
+    .game-container {
+        margin-bottom: 8px;
+    }
+
+    .controls {
+        gap: 5px;
+    }
+
+    .control-btn {
+        min-width: 60px;
+        padding: 6px 10px;
+        font-size: 0.7rem;
+    }
+
+    .cooldown-container {
+        padding: 5px 10px;
+    }
+
+    .instructions {
+        padding: 10px;
     }
 }

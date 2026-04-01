@@ -1,170 +1,169 @@
-# Monkey Jump Game 🐒
+# 猴子跳跃游戏 🐵
 
-A fun and addictive browser-based game inspired by Google Chrome's dinosaur game, but with a monkey as the main character and hippos as obstacles! Help the monkey jump over hippos and achieve the highest score possible.
+一个有趣且令人上瘾的浏览器游戏，灵感来自 Google Chrome 的恐龙游戏，但主角是一只可爱的小猴子，障碍物是河马！帮助小猴子跳过河马，创造最高分。
 
-![Game Screenshot](images/monkey.png)
+## 🎮 立即游玩
 
-## 🎮 Play Now
+直接在浏览器中打开 `index.html` 文件即可开始游戏！
 
-You can play the game directly in your browser by opening the `index.html` file or by hosting it on a web server.
+## 🚀 如何运行
 
-## 🚀 How to Run
+### 方法 1：直接打开
+双击 `index.html` 文件，或在浏览器中打开该文件。
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/monkey-jump.git
-   ```
+### 方法 2：使用本地服务器（推荐）
+```bash
+# 使用 Python
+cd d:\game1
+python -m http.server 8000
 
-2. Navigate to the project folder:
-   ```bash
-   cd monkey-jump
-   ```
+# 然后在浏览器访问：http://localhost:8000
+```
 
-3. Open `index.html` in your web browser:
-   ```bash
-   # Just double-click the file or use:
-   open index.html  # On macOS
-   start index.html # On Windows
-   xdg-open index.html # On Linux
-   ```
+### 方法 3：部署到 GitHub Pages
+1. 在 GitHub 创建新仓库
+2. 上传所有文件
+3. 在 Settings → Pages 中启用 GitHub Pages
+4. 访问你的专属网址
 
-## 🎯 How to Play
+## 🎯 游戏玩法
 
-- **Objective**: Control the monkey and jump over incoming hippos.
-- **Controls**:
-  - Press `SPACE`, `UP ARROW`, or `CLICK` to make the monkey jump
-  - Press `P` to pause/resume the game
-  - Press `R` to restart when game is over
-- **Scoring**:
-  - Each hippo dodged gives you 1 point
-  - Game speed increases every 10 points
-  - Try to beat your high score!
+### 操作方式
+| 操作 | 电脑 | 手机 |
+|------|------|------|
+| 跳跃 | 空格键 / 上箭头 / 点击屏幕 | 点击跳跃按钮 / 点击屏幕 |
+| 发射飞镖 | F 键 / 点击飞镖按钮 | 点击飞镖按钮 |
+| 暂停 | P 键 / 点击暂停按钮 | 点击暂停按钮 |
+| 重新开始 | R 键 / 点击再来一局 | 点击再来一局 |
 
-## ✨ Features
+### 游戏规则
+- **目标**：控制小猴子，跳过迎面而来的河马
+- **得分**：跳过河马得 1 分，用飞镖击中河马得 2 分
+- **速度**：每得 10 分，游戏速度增加
+- **失败**：猴子碰到河马，游戏结束
 
-- 🐒 **Cute monkey character** with smooth jumping physics
-- 🦛 **Randomly generated hippo obstacles** at different heights
-- 📊 **Score tracking** with local storage for high scores
-- ⚡ **Progressive difficulty** - game speeds up as you score more points
-- 🎨 **Beautiful UI** with retro gaming aesthetic
-- 🎮 **Multiple control options** (keyboard, mouse, touch)
-- ⏸️ **Pause/resume functionality**
-- 📱 **Responsive design** that works on desktop and mobile
-- ☁️ **Animated background** with moving clouds
+### 飞镖系统
+- 飞镖可以消灭河马
+- 消灭河马得 2 分（比普通跳过多 1 分）
+- 飞镖有 3 秒冷却时间
+- 合理使用飞镖度过难关！
 
-## 🛠️ Technologies Used
+## ✨ 游戏特色
 
-- **HTML5** for structure
-- **CSS3** for styling with Flexbox and animations
-- **JavaScript (ES6)** for game logic
-- **HTML5 Canvas** for rendering game graphics
-- **Local Storage** for saving high scores
-- **Font Awesome** for icons
-- **Google Fonts** for typography
+- 🐵 **可爱的猴子角色** - 使用透明背景图片，完美融入场景
+- 🦛 **河马障碍物** - 从右侧不断出现
+- 📊 **分数追踪** - 本地存储最高分记录
+- ⚡ **渐进难度** - 分数越高，速度越快
+- 🎨 **精美 UI** - 中文界面，色彩鲜艳
+- 📱 **完美适配** - 电脑和手机都能流畅游玩
+- 🎯 **飞镖系统** - 3 秒冷却， strategize 使用
+- ☁️ **动态背景** - 飘动的云朵，绿色草地
 
-## 📁 Project Structure
+## 📁 项目结构
 
 ```
 monkey-jump/
-├── index.html          # Main HTML file
-├── README.md           # This file
-├── LICENSE             # MIT License
-├── .gitignore          # Git ignore file
-├── images/             # Game assets
-│   ├── monkey.png      # Monkey character
-│   └── hippo.png       # Hippo obstacle
-├── css/                # Stylesheets
-│   └── style.css       # Main styles
-└── js/                 # JavaScript files
-    └── game.js         # Game logic
+├── index.html          # 游戏主页面（中文）
+├── README.md           # 说明文档
+├── LICENSE             # MIT 许可证
+├── .gitignore          # Git 忽略文件
+├── process-images.html # 图片背景处理工具
+├── images/             # 游戏素材
+│   ├── monkey.png      # 猴子（透明背景）
+│   └── hippo.png       # 河马（透明背景）
+├── css/                # 样式文件
+│   └── style.css       # 游戏样式（手机优化）
+└── js/                 # JavaScript 文件
+    └── game.js         # 游戏逻辑
 ```
 
-## 🎨 Game Design Details
+## 🎮 游戏参数
 
-### Game Mechanics
-- **Gravity Physics**: Realistic jumping with gravity simulation
-- **Collision Detection**: Rectangle-based collision between monkey and hippos
-- **Progressive Difficulty**: Speed increases with score to keep the game challenging
-- **Randomization**: Hippos spawn at random heights and intervals
+### 猴子属性
+- 跳跃强度：-25（强力跳跃）
+- 重力：0.5（低重力 = 长滞空）
+- 尺寸：60x80 像素
 
-### Visual Elements
-- **Sky Background**: Animated clouds that move across the screen
-- **Ground Layer**: Brown ground with green grass on top
-- **Character Sprites**: Custom monkey and hippo images
-- **UI Elements**: Retro-style score display and control buttons
+### 河马属性
+- 生成间隔：180 帧（约 3 秒）
+- 移动速度：3
+- 尺寸：80x50 像素
 
-## 🔧 Customization
+### 飞镖属性
+- 冷却时间：3 秒（180 帧）
+- 飞行速度：12
+- 伤害：一击消灭河马
 
-Want to customize the game? Here are some easy modifications:
+## 🔧 自定义修改
 
-### Change Game Difficulty
-Edit `js/game.js`:
+### 调整跳跃高度
+编辑 `js/game.js`：
 ```javascript
-// Adjust these values:
-let gameSpeed = 5; // Base speed
-let hippoSpawnRate = 100; // Frames between hippo spawns
-let speed = 1.0 + Math.floor(score / 10) * 0.2; // Speed increase rate
+jumpStrength: -25  // 更负 = 跳得更高
 ```
 
-### Replace Images
-Simply replace the files in the `images/` folder:
-- `monkey.png` - Should be 1408x768 or similar aspect ratio
-- `hippo.png` - Should be 1408x768 or similar aspect ratio
-
-### Change Colors
-Edit `css/style.css` to modify the color scheme:
-```css
-body {
-    background: linear-gradient(135deg, #1a2980, #26d0ce); /* Background gradient */
-}
+### 调整滞空时间
+```javascript
+gravity: 0.5  // 更小 = 滞空更长
 ```
 
-## 🐛 Known Issues & Future Improvements
+### 调整河马生成频率
+```javascript
+hippoSpawnRate: 180  // 更大 = 生成更慢
+```
 
-### Current Issues
-- Collision detection uses simple rectangles (may not be pixel-perfect)
-- No sound effects (placeholder button only)
-- Limited animation frames for characters
+### 更换图片
+替换 `images/` 文件夹中的图片：
+- `monkey.png` - 猴子图片（建议透明背景）
+- `hippo.png` - 河马图片（建议透明背景）
 
-### Planned Improvements
-- [ ] Add sound effects and background music
-- [ ] Implement pixel-perfect collision detection
-- [ ] Add more obstacle types (birds, stones, etc.)
-- [ ] Include power-ups (double jump, slow motion, etc.)
-- [ ] Add monkey animations (running, jumping frames)
-- [ ] Implement online leaderboard
-- [ ] Create level progression system
+## 🐛 已知问题与改进计划
 
-## 🤝 Contributing
+### 当前版本
+- ✅ 跳跃流畅，滞空时间长
+- ✅ 河马生成频率合理
+- ✅ 飞镖系统完整
+- ✅ 手机完美适配
+- ✅ 全中文界面
 
-Contributions are welcome! If you have ideas for improvements or find bugs:
+### 计划改进
+- [ ] 添加音效和背景音乐
+- [ ] 更多障碍类型（石头、鸟类等）
+- [ ] 道具系统（双倍分数、慢动作等）
+- [ ] 猴子动画（奔跑、跳跃帧动画）
+- [ ] 在线排行榜
+- [ ] 关卡系统
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## 🤝 贡献
 
-## 📄 License
+欢迎贡献！如果你有任何改进建议或发现 Bug：
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+1. Fork 本仓库
+2. 创建功能分支 (`git checkout -b feature/新功能`)
+3. 提交更改 (`git commit -m '添加新功能'`)
+4. 推送到分支 (`git push origin feature/新功能`)
+5. 提交 Pull Request
 
-## 🙏 Acknowledgments
+## 📄 许可证
 
-- Inspired by Google Chrome's dinosaur game
-- Monkey and hippo images created for this project
-- Thanks to all contributors and testers
-- Built with ❤️ for the gaming community
+本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
 
-## 📞 Contact & Support
+## 🙏 致谢
 
-If you have questions, suggestions, or just want to share your high score:
+- 灵感来自 Google Chrome 恐龙游戏
+- 使用 Font Awesome 图标
+- 使用 Google Fonts 中文字体
+- 感谢所有贡献者和测试者
 
-- Open an [issue](https://github.com/yourusername/monkey-jump/issues) on GitHub
-- Share your feedback via pull requests
+## 📞 联系方式
+
+如有问题、建议或想分享你的最高分：
+
+- 在 GitHub 提交 [Issue](https://github.com/yourusername/monkey-jump/issues)
+- 通过 Pull Request 分享你的改进
 
 ---
 
-**Happy Jumping!** 🐒🦛✨
+**跳跃快乐！🐵🦛✨**
 
-*Made with JavaScript and fun!*
+*用 JavaScript 和爱心制作！*

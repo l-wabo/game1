@@ -1,7 +1,7 @@
-// Monkey Jump Game
-// Main game logic
+// 猴子跳跃游戏 - Monkey Jump Game
+// 完整游戏逻辑
 
-// Game variables
+// 游戏变量
 let canvas, ctx;
 let gameRunning = false;
 let gamePaused = false;
@@ -9,10 +9,9 @@ let gameOver = false;
 let score = 0;
 let highScore = localStorage.getItem('monkeyJumpHighScore') || 0;
 let speed = 1.0;
-let gameSpeed = 3.5;
 let frames = 0;
 
-// Game objects
+// 游戏对象 - 猴子（增强跳跃能力）
 let monkey = {
     x: 80,
     y: 280,
@@ -20,185 +19,182 @@ let monkey = {
     height: 80,
     jumping: false,
     jumpVelocity: 0,
-    jumpStrength: -22,
-    gravity: 0.7,
+    jumpStrength: -25,    // 强跳跃力
+    gravity: 0.5,         // 低重力 = 更长滞空
     groundY: 280
 };
 
+// 河马数组和生成设置
 let hippos = [];
-let hippoSpawnRate = 120; // frames between hippo spawns
-let hippoFixedHeight = 300; // Fixed height for hippos on ground
+let hippoSpawnRate = 180;   // 180 帧生成一个（约 3 秒）
+let hippoFixedHeight = 300;
+let hippoSpeed = 3;         // 河马速度
 
-// Images
+// 图片
 let monkeyImg, hippoImg;
 let imagesLoaded = false;
+let imageLoadError = false;
 
-// Dart (projectile) system
+// 飞镖系统
 let darts = [];
-let dartCooldown = 0; // 0 = ready to shoot
-let dartCooldownMax = 180; // 3 seconds at 60fps
+let dartCooldown = 0;
+let dartCooldownMax = 180;  // 3 秒冷却
 let dartSpeed = 12;
 let dartWidth = 20;
 let dartHeight = 10;
 
-// DOM elements
-let scoreElement, highScoreElement, speedElement;
+// DOM 元素
+let scoreElement, highScoreElement, speedElement, cooldownElement;
 let startScreen, gameOverScreen, finalScoreElement;
-let startBtn, restartBtn, pauseBtn, soundBtn, dartBtn, instructionsBtn, closeInstructionsBtn;
-let instructionsPanel;
+let startBtn, restartBtn, pauseBtn, jumpBtn, dartBtn, instructionsBtn, closeInstructionsBtn;
+let instructionsPanel, cooldownBar;
 
-// Initialize game
+// 初始化游戏
 function init() {
-    // Get canvas and context
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
 
-    // Get DOM elements
+    // 获取 DOM 元素
     scoreElement = document.getElementById('score');
     highScoreElement = document.getElementById('high-score');
     speedElement = document.getElementById('speed');
+    cooldownElement = document.getElementById('cooldown-text');
     startScreen = document.getElementById('startScreen');
     gameOverScreen = document.getElementById('gameOverScreen');
     finalScoreElement = document.getElementById('final-score');
+    cooldownBar = document.getElementById('cooldown-bar');
 
-    // Set high score
     highScoreElement.textContent = highScore;
 
-    // Load images
+    // 加载图片
     loadImages();
 
-    // Setup event listeners
+    // 设置事件监听
     setupEventListeners();
 
-    // Start game loop
+    // 启动游戏循环
     requestAnimationFrame(gameLoop);
 }
 
-// Load game images
+// 加载游戏图片
 function loadImages() {
     monkeyImg = new Image();
     hippoImg = new Image();
 
     monkeyImg.onload = function() {
-        console.log('Monkey image loaded');
-        checkImagesLoaded();
+        console.log('猴子图片已加载');
+        imagesLoaded = true;
     };
 
     hippoImg.onload = function() {
-        console.log('Hippo image loaded');
-        checkImagesLoaded();
+        console.log('河马图片已加载');
     };
 
     monkeyImg.src = 'images/monkey.png';
     hippoImg.src = 'images/hippo.png';
 
-    // If images fail to load, use fallback colors
     monkeyImg.onerror = function() {
-        console.log('Failed to load monkey image, using fallback');
-        monkeyImg = null;
-        checkImagesLoaded();
+        console.log('猴子图片加载失败，使用备用绘制');
+        imageLoadError = true;
+        imagesLoaded = true;
     };
 
     hippoImg.onerror = function() {
-        console.log('Failed to load hippo image, using fallback');
-        hippoImg = null;
-        checkImagesLoaded();
+        console.log('河马图片加载失败，使用备用绘制');
+        imageLoadError = true;
     };
 }
 
-function checkImagesLoaded() {
-    // Both images are considered loaded even if they failed (null)
-    imagesLoaded = true;
-}
-
-// Setup event listeners
+// 设置事件监听
 function setupEventListeners() {
-    // Keyboard controls
+    // 键盘控制
     document.addEventListener('keydown', function(e) {
-        // Start game on any key if not started
         if (!gameRunning && !gameOver) {
             startGame();
             return;
         }
 
-        // Jump controls
+        // 跳跃控制
         if ((e.code === 'Space' || e.code === 'ArrowUp') && gameRunning && !gamePaused) {
             jump();
-            e.preventDefault(); // Prevent spacebar from scrolling page
+            e.preventDefault();
         }
 
-        // Pause with 'P' key
-        if (e.code === 'KeyP' && gameRunning) {
-            togglePause();
-        }
-
-        // Shoot dart with 'F' key
+        // 飞镖控制
         if (e.code === 'KeyF' && gameRunning && !gamePaused) {
             shootDart();
             e.preventDefault();
         }
 
-        // Restart game on 'R' key when game over
+        // 暂停
+        if (e.code === 'KeyP' && gameRunning) {
+            togglePause();
+        }
+
+        // 重新开始
         if (e.code === 'KeyR' && gameOver) {
             restartGame();
         }
     });
 
-    // Click/touch controls - jump on canvas click
-    canvas.addEventListener('click', function() {
+    // 点击画布跳跃
+    canvas.addEventListener('click', function(e) {
         if (!gameRunning && !gameOver) {
             startGame();
         } else if (gameRunning && !gamePaused) {
-            jump();
+            // 检查是否点击了飞镖按钮区域
+            const rect = canvas.getBoundingClientRect();
+            const clickY = e.clientY - rect.top;
+
+            // 如果点击的是画布下半部分，跳跃
+            if (clickY > rect.height * 0.3) {
+                jump();
+            }
         }
     });
 
-    // Touch controls for mobile - prevent default behavior
+    // 触摸控制（手机优化）
     canvas.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+
         if (!gameRunning && !gameOver) {
             startGame();
         } else if (gameRunning && !gamePaused) {
-            e.preventDefault();
             jump();
         }
     }, { passive: false });
 
-    // Button event listeners
+    // 按钮事件
     startBtn = document.getElementById('startBtn');
     restartBtn = document.getElementById('restartBtn');
     pauseBtn = document.getElementById('pauseBtn');
-    soundBtn = document.getElementById('soundBtn');
+    jumpBtn = document.getElementById('jumpBtn');
     dartBtn = document.getElementById('dartBtn');
     instructionsBtn = document.getElementById('instructionsBtn');
     closeInstructionsBtn = document.getElementById('closeInstructionsBtn');
     instructionsPanel = document.getElementById('instructionsPanel');
 
-    startBtn.addEventListener('click', startGame);
-    restartBtn.addEventListener('click', restartGame);
-    pauseBtn.addEventListener('click', togglePause);
-    dartBtn.addEventListener('click', shootDart);
-
-    // Sound toggle (placeholder - no actual sound implementation)
-    soundBtn.addEventListener('click', function() {
-        let soundOn = soundBtn.innerHTML.includes('ON');
-        if (soundOn) {
-            soundBtn.innerHTML = '<i class="fas fa-volume-mute"></i> SOUND OFF';
-        } else {
-            soundBtn.innerHTML = '<i class="fas fa-volume-up"></i> SOUND ON';
-        }
-    });
-
-    // Instructions panel
-    instructionsBtn.addEventListener('click', function() {
+    if (startBtn) startBtn.addEventListener('click', startGame);
+    if (restartBtn) restartBtn.addEventListener('click', restartGame);
+    if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
+    if (jumpBtn) jumpBtn.addEventListener('click', jump);
+    if (jumpBtn) jumpBtn.addEventListener('touchstart', function(e) { e.preventDefault(); jump(); });
+    if (dartBtn) dartBtn.addEventListener('click', shootDart);
+    if (dartBtn) dartBtn.addEventListener('touchstart', function(e) { e.preventDefault(); shootDart(); });
+    if (instructionsBtn) instructionsBtn.addEventListener('click', function() {
         instructionsPanel.style.display = 'block';
     });
-
-    closeInstructionsBtn.addEventListener('click', function() {
+    if (closeInstructionsBtn) closeInstructionsBtn.addEventListener('click', function() {
         instructionsPanel.style.display = 'none';
+    });
+
+    // 防止双击缩放
+    document.addEventListener('dblclick', function(e) {
+        e.preventDefault();
     });
 }
 
-// Start game
+// 开始游戏
 function startGame() {
     if (gameRunning) return;
 
@@ -209,49 +205,44 @@ function startGame() {
     speed = 1.0;
     frames = 0;
 
-    // Reset monkey position
     monkey.y = monkey.groundY;
     monkey.jumping = false;
     monkey.jumpVelocity = 0;
 
-    // Clear hippos
     hippos = [];
-
-    // Clear darts and reset cooldown
     darts = [];
     dartCooldown = 0;
 
-    // Update UI
-    startScreen.style.display = 'none';
-    gameOverScreen.style.display = 'none';
+    if (startScreen) startScreen.style.display = 'none';
+    if (gameOverScreen) gameOverScreen.style.display = 'none';
     scoreElement.textContent = score;
     speedElement.textContent = speed.toFixed(1) + 'x';
-
-    // Update pause button text
-    pauseBtn.innerHTML = '<i class="fas fa-pause"></i> PAUSE';
+    if (pauseBtn) pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
 }
 
-// Restart game
+// 重新开始
 function restartGame() {
     gameOver = false;
-    gameOverScreen.style.display = 'none';
+    if (gameOverScreen) gameOverScreen.style.display = 'none';
     startGame();
 }
 
-// Toggle pause
+// 切换暂停
 function togglePause() {
     if (!gameRunning || gameOver) return;
 
     gamePaused = !gamePaused;
 
-    if (gamePaused) {
-        pauseBtn.innerHTML = '<i class="fas fa-play"></i> RESUME';
-    } else {
-        pauseBtn.innerHTML = '<i class="fas fa-pause"></i> PAUSE';
+    if (pauseBtn) {
+        if (gamePaused) {
+            pauseBtn.innerHTML = '<i class="fas fa-play"></i> 继续';
+        } else {
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+        }
     }
 }
 
-// Make monkey jump
+// 跳跃函数
 function jump() {
     if (!monkey.jumping && gameRunning && !gamePaused) {
         monkey.jumping = true;
@@ -259,19 +250,11 @@ function jump() {
     }
 }
 
-// Double jump ability (optional, for better control)
-function canJump() {
-    return !monkey.jumping || monkey.jumpVelocity > 0;
-}
-
-// Shoot a dart
+// 发射飞镖
 function shootDart() {
     if (!gameRunning || gamePaused || gameOver) return;
-
-    // Check cooldown
     if (dartCooldown > 0) return;
 
-    // Create a new dart at monkey's position
     darts.push({
         x: monkey.x + monkey.width,
         y: monkey.y + monkey.height / 2 - dartHeight / 2,
@@ -280,22 +263,20 @@ function shootDart() {
         active: true
     });
 
-    // Start cooldown (3 seconds = 180 frames at 60fps)
     dartCooldown = dartCooldownMax;
 }
 
-// Update game state
+// 更新游戏状态
 function update() {
     if (!gameRunning || gamePaused || gameOver) return;
 
     frames++;
 
-    // Update monkey position (jump physics)
+    // 更新猴子位置（跳跃物理）
     if (monkey.jumping) {
         monkey.y += monkey.jumpVelocity;
         monkey.jumpVelocity += monkey.gravity;
 
-        // Hit the ground
         if (monkey.y > monkey.groundY) {
             monkey.y = monkey.groundY;
             monkey.jumping = false;
@@ -303,16 +284,15 @@ function update() {
         }
     }
 
-    // Spawn hippos
+    // 生成河马
     if (frames % hippoSpawnRate === 0) {
         spawnHippo();
     }
 
-    // Update hippos position
+    // 更新河马位置
     for (let i = hippos.length - 1; i >= 0; i--) {
-        hippos[i].x -= gameSpeed * speed;
+        hippos[i].x -= hippoSpeed * speed;
 
-        // Remove hippos that are off screen
         if (hippos[i].x + hippos[i].width < 0) {
             hippos.splice(i, 1);
             score++;
@@ -320,55 +300,49 @@ function update() {
         }
     }
 
-    // Update darts
+    // 更新飞镖冷却
     if (dartCooldown > 0) {
         dartCooldown--;
+        updateCooldownUI();
     }
 
-    // Update darts position and check collisions with hippos
+    // 更新飞镖位置并检测与河马的碰撞
     for (let i = darts.length - 1; i >= 0; i--) {
-        // Move dart
         darts[i].x += dartSpeed;
 
-        // Remove darts that are off screen
         if (darts[i].x > canvas.width) {
             darts.splice(i, 1);
             continue;
         }
 
-        // Check dart collision with hippos
         for (let j = hippos.length - 1; j >= 0; j--) {
             if (darts[i].x < hippos[j].x + hippos[j].width &&
                 darts[i].x + darts[i].width > hippos[j].x &&
                 darts[i].y < hippos[j].y + hippos[j].height &&
                 darts[i].y + darts[i].height > hippos[j].y) {
 
-                // Dart hits hippo - remove both
                 darts.splice(i, 1);
                 hippos.splice(j, 1);
-                score += 2; // Bonus points for shooting hippo
+                score += 2;
                 updateScore();
-                break; // This dart is gone, move to next dart
+                break;
             }
         }
     }
 
-    // Check collisions
+    // 检测碰撞
     checkCollisions();
 
-    // Increase speed every 10 points
+    // 每 10 分增加速度
     if (score > 0 && score % 10 === 0) {
-        speed = 1.0 + Math.floor(score / 10) * 0.2;
+        speed = 1.0 + Math.floor(score / 10) * 0.15;
         speedElement.textContent = speed.toFixed(1) + 'x';
-
-        // Increase spawn rate with speed
-        hippoSpawnRate = Math.max(40, 100 - Math.floor(score / 10) * 5);
+        hippoSpawnRate = Math.max(90, 180 - Math.floor(score / 10) * 8);
     }
 }
 
-// Spawn a new hippo
+// 生成河马
 function spawnHippo() {
-    // Hippos now appear only on the ground (fixed height)
     hippos.push({
         x: canvas.width,
         y: hippoFixedHeight,
@@ -377,162 +351,166 @@ function spawnHippo() {
     });
 }
 
-// Check for collisions between monkey and hippos
+// 检测碰撞
 function checkCollisions() {
     for (let hippo of hippos) {
-        if (monkey.x < hippo.x + hippo.width &&
-            monkey.x + monkey.width > hippo.x &&
-            monkey.y < hippo.y + hippo.height &&
-            monkey.y + monkey.height > hippo.y) {
+        // 缩小碰撞箱，让跳跃更容易
+        const monkeyHitbox = {
+            x: monkey.x + 10,
+            y: monkey.y + 10,
+            width: monkey.width - 20,
+            height: monkey.height - 10
+        };
 
-            // Collision detected - game over
+        const hippoHitbox = {
+            x: hippo.x + 5,
+            y: hippo.y + 5,
+            width: hippo.width - 10,
+            height: hippo.height - 5
+        };
+
+        if (monkeyHitbox.x < hippoHitbox.x + hippoHitbox.width &&
+            monkeyHitbox.x + monkeyHitbox.width > hippoHitbox.x &&
+            monkeyHitbox.y < hippoHitbox.y + hippoHitbox.height &&
+            monkeyHitbox.y + monkeyHitbox.height > hippoHitbox.y) {
+
             gameOver = true;
             gameRunning = false;
 
-            // Update high score if needed
             if (score > highScore) {
                 highScore = score;
                 localStorage.setItem('monkeyJumpHighScore', highScore);
                 highScoreElement.textContent = highScore;
             }
 
-            // Show game over screen
-            finalScoreElement.textContent = score;
-            gameOverScreen.style.display = 'flex';
-
+            if (finalScoreElement) finalScoreElement.textContent = score;
+            if (gameOverScreen) gameOverScreen.style.display = 'flex';
             break;
         }
     }
 }
 
-// Update score display
+// 更新分数
 function updateScore() {
     scoreElement.textContent = score;
 }
 
-// Draw game elements
+// 更新冷却 UI
+function updateCooldownUI() {
+    if (cooldownBar && cooldownElement) {
+        const percent = (dartCooldown / dartCooldownMax) * 100;
+        cooldownBar.style.width = percent + '%';
+
+        if (dartCooldown === 0) {
+            cooldownElement.textContent = '就绪!';
+            cooldownBar.style.backgroundColor = '#4CAF50';
+        } else {
+            cooldownElement.textContent = (dartCooldown / 60).toFixed(1) + '秒';
+            cooldownBar.style.backgroundColor = '#ff9800';
+        }
+    }
+}
+
+// 绘制游戏
 function draw() {
-    // Clear canvas with sky blue background
+    // 清空画布
     ctx.fillStyle = '#87CEEB';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw ground (positioned to match character feet)
+    // 绘制背景云朵
+    drawClouds();
+
+    // 绘制地面
     let groundY = monkey.groundY + monkey.height;
     ctx.fillStyle = '#8B4513';
     ctx.fillRect(0, groundY, canvas.width, 50);
 
-    // Draw grass on top of ground
     ctx.fillStyle = '#228B22';
     ctx.fillRect(0, groundY, canvas.width, 8);
 
-    // Add some grass details
     ctx.fillStyle = '#32CD32';
     for (let i = 0; i < canvas.width; i += 30) {
         ctx.fillRect(i, groundY - 3, 20, 4);
     }
 
-    // Draw monkey (with transparent background effect)
-    if (monkeyImg) {
-        // Draw image with transparency
-        ctx.save();
-        ctx.globalAlpha = 1.0;
+    // 绘制猴子（支持透明背景）
+    if (monkeyImg && !imageLoadError) {
         ctx.drawImage(monkeyImg, monkey.x, monkey.y, monkey.width, monkey.height);
-        ctx.restore();
     } else {
-        // Fallback: Draw monkey as simple shape (no background)
-        ctx.fillStyle = '#8B4513'; // Brown monkey body
+        // 备用绘制
+        ctx.fillStyle = '#8B4513';
         ctx.beginPath();
-        ctx.arc(monkey.x + 30, monkey.y + 30, 25, 0, Math.PI * 2); // Head
+        ctx.arc(monkey.x + 30, monkey.y + 30, 25, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#D2691E'; // Light brown face
+        ctx.fillStyle = '#D2691E';
         ctx.beginPath();
-        ctx.arc(monkey.x + 30, monkey.y + 25, 18, 0, Math.PI * 2); // Face
+        ctx.arc(monkey.x + 30, monkey.y + 25, 18, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#000'; // Eyes
+        ctx.fillStyle = '#000';
         ctx.fillRect(monkey.x + 22, monkey.y + 18, 6, 6);
         ctx.fillRect(monkey.x + 38, monkey.y + 18, 6, 6);
-        ctx.fillStyle = '#8B0000'; // Mouth
-        ctx.beginPath();
-        ctx.arc(monkey.x + 30, monkey.y + 35, 10, 0, Math.PI, false);
-        ctx.stroke();
     }
 
-    // Draw hippos (with transparent background effect)
+    // 绘制河马（支持透明背景）
     for (let hippo of hippos) {
-        if (hippoImg) {
-            ctx.save();
-            ctx.globalAlpha = 1.0;
+        if (hippoImg && !imageLoadError) {
             ctx.drawImage(hippoImg, hippo.x, hippo.y, hippo.width, hippo.height);
-            ctx.restore();
         } else {
-            // Fallback: Draw hippo as simple shape (no background)
-            ctx.fillStyle = '#708090'; // Slate gray hippo
+            // 备用绘制
+            ctx.fillStyle = '#708090';
             ctx.beginPath();
-            ctx.ellipse(hippo.x + 40, hippo.y + 30, 40, 25, 0, 0, Math.PI * 2); // Body
+            ctx.ellipse(hippo.x + 40, hippo.y + 30, 40, 25, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = '#778899'; // Light gray
+            ctx.fillStyle = '#778899';
             ctx.beginPath();
-            ctx.ellipse(hippo.x + 35, hippo.y + 20, 15, 12, 0, 0, Math.PI * 2); // Head
+            ctx.ellipse(hippo.x + 35, hippo.y + 20, 15, 12, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = '#000'; // Eye
+            ctx.fillStyle = '#000';
             ctx.fillRect(hippo.x + 30, hippo.y + 15, 5, 5);
-            ctx.fillStyle = '#FF69B4'; // Pink ear
-            ctx.beginPath();
-            ctx.arc(hippo.x + 25, hippo.y + 10, 6, 0, Math.PI * 2);
-            ctx.fill();
         }
     }
 
-    // Draw darts
+    // 绘制飞镖
     for (let dart of darts) {
-        ctx.fillStyle = '#FF0000';
-        ctx.fillRect(dart.x, dart.y, dart.width, dart.height);
-
-        // Draw dart tip
-        ctx.fillStyle = '#FF9900';
-        ctx.fillRect(dart.x + dart.width - 5, dart.y, 5, dart.height);
+        ctx.fillStyle = '#FF4444';
+        ctx.beginPath();
+        ctx.moveTo(dart.x, dart.y + dart.height/2);
+        ctx.lineTo(dart.x + dart.width, dart.y);
+        ctx.lineTo(dart.x + dart.width, dart.y + dart.height);
+        ctx.closePath();
+        ctx.fill();
     }
 
-    // Draw clouds in background if game is running
-    if (gameRunning && !gamePaused) {
-        drawClouds();
-    }
-
-    // Draw pause overlay
+    // 绘制暂停遮罩
     if (gamePaused) {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.font = '40px "Press Start 2P", cursive';
+        ctx.font = 'bold 36px Arial';
         ctx.fillStyle = '#FF9800';
         ctx.textAlign = 'center';
-        ctx.fillText('GAME PAUSED', canvas.width / 2, canvas.height / 2 - 30);
+        ctx.fillText('游戏暂停', canvas.width / 2, canvas.height / 2 - 30);
 
-        ctx.font = '20px "Press Start 2P", cursive';
+        ctx.font = '18px Arial';
         ctx.fillStyle = '#FFF';
-        ctx.fillText('Press P or click PAUSE to resume', canvas.width / 2, canvas.height / 2 + 30);
+        ctx.fillText('点击 继续 按钮恢复游戏', canvas.width / 2, canvas.height / 2 + 30);
     }
 }
 
-// Draw background clouds
+// 绘制云朵
 function drawClouds() {
-    // Draw some clouds at fixed positions based on frame count
     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
 
-    // Cloud 1
-    let cloud1X = (canvas.width - frames * 0.5) % (canvas.width + 200) - 100;
-    drawCloud(cloud1X, 80, 60);
+    let cloud1X = (canvas.width - frames * 0.3) % (canvas.width + 200) - 100;
+    drawCloud(cloud1X, 60, 50);
 
-    // Cloud 2
-    let cloud2X = (canvas.width - frames * 0.3) % (canvas.width + 300) - 150;
-    drawCloud(cloud2X, 120, 40);
+    let cloud2X = (canvas.width - frames * 0.5) % (canvas.width + 300) - 150;
+    drawCloud(cloud2X, 100, 35);
 
-    // Cloud 3
-    let cloud3X = (canvas.width - frames * 0.7) % (canvas.width + 250) - 125;
-    drawCloud(cloud3X, 50, 50);
+    let cloud3X = (canvas.width - frames * 0.4) % (canvas.width + 250) - 125;
+    drawCloud(cloud3X, 40, 45);
 }
 
-// Draw a single cloud
 function drawCloud(x, y, size) {
     ctx.beginPath();
     ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
@@ -542,12 +520,12 @@ function drawCloud(x, y, size) {
     ctx.fill();
 }
 
-// Main game loop
+// 游戏主循环
 function gameLoop() {
     update();
     draw();
     requestAnimationFrame(gameLoop);
 }
 
-// Initialize game when page loads
+// 页面加载后初始化
 window.addEventListener('load', init);

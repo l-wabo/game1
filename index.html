@@ -1,109 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monkey Jump - Hippo Dodger Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>猴子跳跃 - 躲避河马大冒险</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="images/monkey.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-gamepad"></i> Monkey Jump</h1>
-            <p class="subtitle">Dodge the hippos like a pro monkey!</p>
+            <h1><i class="fas fa-monkey"></i> 猴子跳跃</h1>
+            <p class="subtitle">躲避河马，成为跳跃高手！</p>
         </header>
 
         <main>
             <div class="game-area">
                 <div class="score-board">
                     <div class="score-item">
-                        <span class="score-label">SCORE</span>
+                        <span class="score-label">得分</span>
                         <span id="score" class="score-value">0</span>
                     </div>
                     <div class="score-item">
-                        <span class="score-label">HIGH SCORE</span>
+                        <span class="score-label">最高分</span>
                         <span id="high-score" class="score-value">0</span>
                     </div>
                     <div class="score-item">
-                        <span class="score-label">SPEED</span>
+                        <span class="score-label">速度</span>
                         <span id="speed" class="score-value">1.0x</span>
                     </div>
                 </div>
 
                 <div class="game-container">
                     <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+                    <!-- 开始屏幕 -->
                     <div class="game-overlay" id="startScreen">
-                        <h2>MONKEY JUMP</h2>
-                        <p>Help the monkey jump over hippos!</p>
+                        <h2>🐵 猴子跳跃 🦛</h2>
+                        <p>帮助小猴子跳过河马障碍！</p>
                         <div class="controls-info">
                             <div class="control-item">
-                                <i class="fas fa-space-shuttle"></i>
-                                <span>SPACE / UP ARROW / CLICK = JUMP</span>
+                                <i class="fas fa-hand-pointer"></i>
+                                <span>点击屏幕 或 按空格键 = 跳跃</span>
+                            </div>
+                            <div class="control-item">
+                                <i class="fas fa-bullseye"></i>
+                                <span>按 F 键 = 发射飞镖（3 秒冷却）</span>
                             </div>
                             <div class="control-item">
                                 <i class="fas fa-play"></i>
-                                <span>PRESS ANY KEY TO START</span>
+                                <span>按任意键开始游戏</span>
                             </div>
                         </div>
                         <button class="btn start-btn" id="startBtn">
-                            <i class="fas fa-play"></i> START GAME
+                            <i class="fas fa-play"></i> 开始游戏
                         </button>
                     </div>
 
+                    <!-- 游戏结束屏幕 -->
                     <div class="game-overlay" id="gameOverScreen" style="display: none;">
-                        <h2>GAME OVER</h2>
-                        <p>Monkey got caught by a hippo!</p>
+                        <h2>💀 游戏结束</h2>
+                        <p>小猴子被河马抓住了！</p>
                         <div class="final-score">
-                            <span>FINAL SCORE</span>
+                            <span>最终得分</span>
                             <span id="final-score" class="score-value">0</span>
                         </div>
                         <button class="btn restart-btn" id="restartBtn">
-                            <i class="fas fa-redo"></i> PLAY AGAIN
+                            <i class="fas fa-redo"></i> 再来一局
                         </button>
                     </div>
                 </div>
 
+                <!-- 游戏控制按钮 -->
                 <div class="controls">
+                    <button class="btn control-btn jump-btn" id="jumpBtn">
+                        <i class="fas fa-arrow-up"></i> 跳跃
+                    </button>
+                    <button class="btn control-btn dart-btn" id="dartBtn">
+                        <i class="fas fa-bullseye"></i> 飞镖
+                    </button>
                     <button class="btn control-btn" id="pauseBtn">
-                        <i class="fas fa-pause"></i> PAUSE
-                    </button>
-                    <button class="btn control-btn" id="soundBtn">
-                        <i class="fas fa-volume-up"></i> SOUND ON
-                    </button>
-                    <button class="btn control-btn" id="dartBtn">
-                        <i class="fas fa-bullseye"></i> SHOOT DART
+                        <i class="fas fa-pause"></i> 暂停
                     </button>
                     <button class="btn control-btn" id="instructionsBtn">
-                        <i class="fas fa-question-circle"></i> HOW TO PLAY
+                        <i class="fas fa-question-circle"></i> 说明
                     </button>
+                </div>
+
+                <!-- 飞镖冷却显示 -->
+                <div class="cooldown-container">
+                    <span>飞镖冷却：</span>
+                    <div class="cooldown-bar-bg">
+                        <div class="cooldown-bar" id="cooldown-bar" style="width: 0%"></div>
+                    </div>
+                    <span id="cooldown-text" class="cooldown-text">就绪!</span>
                 </div>
             </div>
 
+            <!-- 游戏说明面板 -->
             <div class="instructions" id="instructionsPanel" style="display: none;">
-                <h3><i class="fas fa-graduation-cap"></i> HOW TO PLAY</h3>
+                <h3><i class="fas fa-graduation-cap"></i> 游戏说明</h3>
                 <ul>
-                    <li><strong>Objective:</strong> Control the monkey and jump over incoming hippos.</li>
-                    <li><strong>Controls:</strong> Press <kbd>SPACE</kbd>, <kbd>UP ARROW</kbd>, or <kbd>CLICK</kbd> to jump.</li>
-                    <li><strong>Scoring:</strong> Each hippo dodged gives you 1 point.</li>
-                    <li><strong>Speed:</strong> Game speed increases every 10 points.</li>
-                    <li><strong>Darts:</strong> Press <kbd>F</kbd> or click SHOOT DART button to shoot darts. Darts destroy hippos and give 2 points. 3-second cooldown.</li>
-                    <li><strong>Avoid:</strong> If the monkey hits a hippo, the game ends.</li>
+                    <li><strong>游戏目标：</strong> 控制小猴子，跳过迎面而来的河马。</li>
+                    <li><strong>跳跃操作：</strong> 点击 <kbd>跳跃</kbd> 按钮、按 <kbd>空格</kbd> 或 <kbd>上箭头</kbd> 键跳跃。</li>
+                    <li><strong>飞镖攻击：</strong> 点击 <kbd>飞镖</kbd> 按钮或按 <kbd>F</kbd> 键发射飞镖，可消灭河马得 2 分。</li>
+                    <li><strong>得分规则：</strong> 跳过河马得 1 分，用飞镖击中河马得 2 分。</li>
+                    <li><strong>速度提升：</strong> 每得 10 分，游戏速度会增加。</li>
+                    <li><strong>游戏结束：</strong> 猴子碰到河马，游戏结束。</li>
                 </ul>
-                <p class="tip"><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Use darts strategically when hippos are too close to jump over!</p>
+                <p class="tip"><i class="fas fa-lightbulb"></i> <strong>技巧：</strong> 飞镖有 3 秒冷却时间，合理使用可以度过难关！</p>
                 <button class="btn close-btn" id="closeInstructionsBtn">
-                    <i class="fas fa-times"></i> CLOSE
+                    <i class="fas fa-times"></i> 关闭
                 </button>
             </div>
         </main>
 
         <footer>
-            <p>Created with <i class="fas fa-heart"></i> by Monkey Jump Fans</p>
+            <p>用 <i class="fas fa-heart"></i> 制作 | 猴子跳跃粉丝作品</p>
             <p class="github-link">
                 <i class="fab fa-github"></i>
-                <a href="https://github.com/yourusername/monkey-jump" target="_blank">View on GitHub</a>
+                <a href="https://github.com/yourusername/monkey-jump" target="_blank">在 GitHub 上查看</a>
             </p>
         </footer>
     </div>
