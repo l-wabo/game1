@@ -15,19 +15,19 @@ let frames = 0;
 // Game objects
 let monkey = {
     x: 80,
-    y: 300,
-    width: 80,
+    y: 280,
+    width: 60,
     height: 80,
     jumping: false,
     jumpVelocity: 0,
-    jumpStrength: -18,
-    gravity: 0.8,
-    groundY: 300
+    jumpStrength: -22,
+    gravity: 0.7,
+    groundY: 280
 };
 
 let hippos = [];
-let hippoSpawnRate = 100; // frames between hippo spawns
-let hippoFixedHeight = 310; // Fixed height for hippos on ground
+let hippoSpawnRate = 120; // frames between hippo spawns
+let hippoFixedHeight = 300; // Fixed height for hippos on ground
 
 // Images
 let monkeyImg, hippoImg;
@@ -144,7 +144,7 @@ function setupEventListeners() {
         }
     });
 
-    // Click/touch controls
+    // Click/touch controls - jump on canvas click
     canvas.addEventListener('click', function() {
         if (!gameRunning && !gameOver) {
             startGame();
@@ -152,6 +152,16 @@ function setupEventListeners() {
             jump();
         }
     });
+
+    // Touch controls for mobile - prevent default behavior
+    canvas.addEventListener('touchstart', function(e) {
+        if (!gameRunning && !gameOver) {
+            startGame();
+        } else if (gameRunning && !gamePaused) {
+            e.preventDefault();
+            jump();
+        }
+    }, { passive: false });
 
     // Button event listeners
     startBtn = document.getElementById('startBtn');
@@ -247,6 +257,11 @@ function jump() {
         monkey.jumping = true;
         monkey.jumpVelocity = monkey.jumpStrength;
     }
+}
+
+// Double jump ability (optional, for better control)
+function canJump() {
+    return !monkey.jumping || monkey.jumpVelocity > 0;
 }
 
 // Shoot a dart
@@ -357,8 +372,8 @@ function spawnHippo() {
     hippos.push({
         x: canvas.width,
         y: hippoFixedHeight,
-        width: 100,
-        height: 60
+        width: 80,
+        height: 50
     });
 }
 
@@ -401,41 +416,70 @@ function draw() {
     ctx.fillStyle = '#87CEEB';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw ground
+    // Draw ground (positioned to match character feet)
+    let groundY = monkey.groundY + monkey.height;
     ctx.fillStyle = '#8B4513';
-    ctx.fillRect(0, monkey.groundY + monkey.height - 10, canvas.width, 50);
+    ctx.fillRect(0, groundY, canvas.width, 50);
 
     // Draw grass on top of ground
-    ctx.fillStyle = '#7CFC00';
-    ctx.fillRect(0, monkey.groundY + monkey.height - 10, canvas.width, 10);
+    ctx.fillStyle = '#228B22';
+    ctx.fillRect(0, groundY, canvas.width, 8);
 
-    // Draw monkey
-    if (monkeyImg) {
-        ctx.drawImage(monkeyImg, monkey.x, monkey.y, monkey.width, monkey.height);
-    } else {
-        // Fallback rectangle for monkey
-        ctx.fillStyle = '#FF9800';
-        ctx.fillRect(monkey.x, monkey.y, monkey.width, monkey.height);
-
-        // Draw monkey face
-        ctx.fillStyle = '#000';
-        ctx.fillRect(monkey.x + 60, monkey.y + 20, 10, 10); // eye
-        ctx.fillRect(monkey.x + 20, monkey.y + 50, 40, 20); // mouth
+    // Add some grass details
+    ctx.fillStyle = '#32CD32';
+    for (let i = 0; i < canvas.width; i += 30) {
+        ctx.fillRect(i, groundY - 3, 20, 4);
     }
 
-    // Draw hippos
+    // Draw monkey (with transparent background effect)
+    if (monkeyImg) {
+        // Draw image with transparency
+        ctx.save();
+        ctx.globalAlpha = 1.0;
+        ctx.drawImage(monkeyImg, monkey.x, monkey.y, monkey.width, monkey.height);
+        ctx.restore();
+    } else {
+        // Fallback: Draw monkey as simple shape (no background)
+        ctx.fillStyle = '#8B4513'; // Brown monkey body
+        ctx.beginPath();
+        ctx.arc(monkey.x + 30, monkey.y + 30, 25, 0, Math.PI * 2); // Head
+        ctx.fill();
+        ctx.fillStyle = '#D2691E'; // Light brown face
+        ctx.beginPath();
+        ctx.arc(monkey.x + 30, monkey.y + 25, 18, 0, Math.PI * 2); // Face
+        ctx.fill();
+        ctx.fillStyle = '#000'; // Eyes
+        ctx.fillRect(monkey.x + 22, monkey.y + 18, 6, 6);
+        ctx.fillRect(monkey.x + 38, monkey.y + 18, 6, 6);
+        ctx.fillStyle = '#8B0000'; // Mouth
+        ctx.beginPath();
+        ctx.arc(monkey.x + 30, monkey.y + 35, 10, 0, Math.PI, false);
+        ctx.stroke();
+    }
+
+    // Draw hippos (with transparent background effect)
     for (let hippo of hippos) {
         if (hippoImg) {
+            ctx.save();
+            ctx.globalAlpha = 1.0;
             ctx.drawImage(hippoImg, hippo.x, hippo.y, hippo.width, hippo.height);
+            ctx.restore();
         } else {
-            // Fallback rectangle for hippo
-            ctx.fillStyle = '#607D8B';
-            ctx.fillRect(hippo.x, hippo.y, hippo.width, hippo.height);
-
-            // Draw hippo features
-            ctx.fillStyle = '#000';
-            ctx.fillRect(hippo.x + 80, hippo.y + 20, 10, 10); // eye
-            ctx.fillRect(hippo.x + 20, hippo.y + 40, 60, 10); // mouth
+            // Fallback: Draw hippo as simple shape (no background)
+            ctx.fillStyle = '#708090'; // Slate gray hippo
+            ctx.beginPath();
+            ctx.ellipse(hippo.x + 40, hippo.y + 30, 40, 25, 0, 0, Math.PI * 2); // Body
+            ctx.fill();
+            ctx.fillStyle = '#778899'; // Light gray
+            ctx.beginPath();
+            ctx.ellipse(hippo.x + 35, hippo.y + 20, 15, 12, 0, 0, Math.PI * 2); // Head
+            ctx.fill();
+            ctx.fillStyle = '#000'; // Eye
+            ctx.fillRect(hippo.x + 30, hippo.y + 15, 5, 5);
+            ctx.fillStyle = '#FF69B4'; // Pink ear
+            ctx.beginPath();
+            ctx.arc(hippo.x + 25, hippo.y + 10, 6, 0, Math.PI * 2);
+            ctx.fill();
         }
     }
 
