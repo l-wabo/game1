@@ -1,0 +1,399 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #1a2980, #26d0ce);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    border: 3px solid #ff9800;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #ff9800;
+}
+
+h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2.5rem;
+    color: #ff9800;
+    margin-bottom: 10px;
+    text-shadow: 3px 3px 0 #000;
+}
+
+h1 i {
+    margin-right: 15px;
+    color: #4CAF50;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Score board */
+.score-board {
+    display: flex;
+    justify-content: space-around;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 2px solid #4CAF50;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.score-label {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.score-value {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.8rem;
+    color: #ffeb3b;
+    text-shadow: 2px 2px 0 #000;
+}
+
+/* Game container */
+.game-container {
+    position: relative;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 3px solid #333;
+    background-color: #87CEEB;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    background-color: #87CEEB;
+}
+
+/* Game overlays */
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    z-index: 10;
+}
+
+.game-overlay h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2.5rem;
+    color: #ff9800;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 0 #000;
+}
+
+.game-overlay p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #ddd;
+    max-width: 500px;
+}
+
+.controls-info {
+    background-color: rgba(255, 152, 0, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 20px 0;
+    border: 1px solid #ff9800;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    font-size: 1.1rem;
+}
+
+.control-item i {
+    color: #4CAF50;
+    margin-right: 10px;
+    font-size: 1.3rem;
+}
+
+.final-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 25px 0;
+    background-color: rgba(255, 235, 59, 0.1);
+    padding: 15px 30px;
+    border-radius: 10px;
+    border: 2px solid #ffeb3b;
+}
+
+.final-score span:first-child {
+    font-size: 1.2rem;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+/* Buttons */
+.btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn i {
+    margin-right: 10px;
+}
+
+.start-btn {
+    background: linear-gradient(to right, #4CAF50, #8BC34A);
+    color: white;
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+.start-btn:hover {
+    background: linear-gradient(to right, #45a049, #7cb342);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
+}
+
+.restart-btn {
+    background: linear-gradient(to right, #2196F3, #03A9F4);
+    color: white;
+    box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+}
+
+.restart-btn:hover {
+    background: linear-gradient(to right, #1976D2, #0288D1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(33, 150, 243, 0.6);
+}
+
+.control-btn {
+    background: linear-gradient(to right, #9C27B0, #673AB7);
+    color: white;
+    box-shadow: 0 5px 10px rgba(156, 39, 176, 0.3);
+    padding: 12px 25px;
+    font-size: 1rem;
+}
+
+.control-btn:hover {
+    background: linear-gradient(to right, #7B1FA2, #512DA8);
+    transform: translateY(-2px);
+}
+
+.close-btn {
+    background: linear-gradient(to right, #f44336, #E91E63);
+    color: white;
+    padding: 12px 25px;
+    font-size: 1rem;
+}
+
+.close-btn:hover {
+    background: linear-gradient(to right, #d32f2f, #C2185B);
+    transform: translateY(-2px);
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* Instructions */
+.instructions {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+    border: 2px solid #9C27B0;
+}
+
+.instructions h3 {
+    font-family: 'Press Start 2P', cursive;
+    color: #9C27B0;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.instructions h3 i {
+    margin-right: 10px;
+}
+
+.instructions ul {
+    list-style-type: none;
+    margin: 20px 0;
+    padding-left: 20px;
+}
+
+.instructions li {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.instructions li strong {
+    color: #ff9800;
+}
+
+kbd {
+    background-color: #333;
+    color: #ffeb3b;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+    border: 1px solid #666;
+}
+
+.tip {
+    background-color: rgba(255, 152, 0, 0.1);
+    border-left: 4px solid #ff9800;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 0 5px 5px 0;
+    font-size: 1.1rem;
+}
+
+.tip i {
+    color: #ffeb3b;
+    margin-right: 10px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+footer i {
+    color: #f44336;
+    margin: 0 5px;
+}
+
+.github-link {
+    margin-top: 10px;
+}
+
+.github-link a {
+    color: #4CAF50;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.github-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .score-value {
+        font-size: 1.4rem;
+    }
+
+    .game-overlay h2 {
+        font-size: 1.8rem;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .control-btn {
+        width: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .score-board {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .game-overlay h2 {
+        font-size: 1.5rem;
+    }
+
+    .control-item {
+        font-size: 0.9rem;
+    }
+}

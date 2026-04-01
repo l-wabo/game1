@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monkey Jump - Hippo Dodger Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="images/monkey.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gamepad"></i> Monkey Jump</h1>
+            <p class="subtitle">Dodge the hippos like a pro monkey!</p>
+        </header>
+
+        <main>
+            <div class="game-area">
+                <div class="score-board">
+                    <div class="score-item">
+                        <span class="score-label">SCORE</span>
+                        <span id="score" class="score-value">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">HIGH SCORE</span>
+                        <span id="high-score" class="score-value">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">SPEED</span>
+                        <span id="speed" class="score-value">1.0x</span>
+                    </div>
+                </div>
+
+                <div class="game-container">
+                    <canvas id="gameCanvas" width="800" height="400"></canvas>
+                    <div class="game-overlay" id="startScreen">
+                        <h2>MONKEY JUMP</h2>
+                        <p>Help the monkey jump over hippos!</p>
+                        <div class="controls-info">
+                            <div class="control-item">
+                                <i class="fas fa-space-shuttle"></i>
+                                <span>SPACE / UP ARROW / CLICK = JUMP</span>
+                            </div>
+                            <div class="control-item">
+                                <i class="fas fa-play"></i>
+                                <span>PRESS ANY KEY TO START</span>
+                            </div>
+                        </div>
+                        <button class="btn start-btn" id="startBtn">
+                            <i class="fas fa-play"></i> START GAME
+                        </button>
+                    </div>
+
+                    <div class="game-overlay" id="gameOverScreen" style="display: none;">
+                        <h2>GAME OVER</h2>
+                        <p>Monkey got caught by a hippo!</p>
+                        <div class="final-score">
+                            <span>FINAL SCORE</span>
+                            <span id="final-score" class="score-value">0</span>
+                        </div>
+                        <button class="btn restart-btn" id="restartBtn">
+                            <i class="fas fa-redo"></i> PLAY AGAIN
+                        </button>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn control-btn" id="pauseBtn">
+                        <i class="fas fa-pause"></i> PAUSE
+                    </button>
+                    <button class="btn control-btn" id="soundBtn">
+                        <i class="fas fa-volume-up"></i> SOUND ON
+                    </button>
+                    <button class="btn control-btn" id="instructionsBtn">
+                        <i class="fas fa-question-circle"></i> HOW TO PLAY
+                    </button>
+                </div>
+            </div>
+
+            <div class="instructions" id="instructionsPanel" style="display: none;">
+                <h3><i class="fas fa-graduation-cap"></i> HOW TO PLAY</h3>
+                <ul>
+                    <li><strong>Objective:</strong> Control the monkey and jump over incoming hippos.</li>
+                    <li><strong>Controls:</strong> Press <kbd>SPACE</kbd>, <kbd>UP ARROW</kbd>, or <kbd>CLICK</kbd> to jump.</li>
+                    <li><strong>Scoring:</strong> Each hippo dodged gives you 1 point.</li>
+                    <li><strong>Speed:</strong> Game speed increases every 10 points.</li>
+                    <li><strong>Avoid:</strong> If the monkey hits a hippo, the game ends.</li>
+                </ul>
+                <p class="tip"><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Time your jumps carefully - hippos come at different heights!</p>
+                <button class="btn close-btn" id="closeInstructionsBtn">
+                    <i class="fas fa-times"></i> CLOSE
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <p>Created with <i class="fas fa-heart"></i> by Monkey Jump Fans</p>
+            <p class="github-link">
+                <i class="fab fa-github"></i>
+                <a href="https://github.com/yourusername/monkey-jump" target="_blank">View on GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+</html>
