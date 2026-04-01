@@ -54,6 +54,10 @@ function init() {
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
 
+    // 设置画布尺寸以适应手机
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
     // 获取 DOM 元素
     scoreElement = document.getElementById('score');
     highScoreElement = document.getElementById('high-score');
@@ -74,6 +78,20 @@ function init() {
 
     // 启动游戏循环
     requestAnimationFrame(gameLoop);
+}
+
+// 调整画布尺寸
+function resizeCanvas() {
+    const container = document.querySelector('.game-container');
+    if (container) {
+        const maxWidth = container.clientWidth;
+        const maxHeight = Math.min(400, window.innerHeight * 0.5);
+
+        canvas.style.width = '100%';
+        canvas.style.height = 'auto';
+        canvas.width = Math.min(800, maxWidth);
+        canvas.height = Math.min(400, maxHeight);
+    }
 }
 
 // 加载游戏图片
@@ -141,19 +159,30 @@ function setupEventListeners() {
         }
     });
 
-    // 点击画布跳跃（游戏开始后）
+    // 点击画布 - 支持开始游戏和跳跃
     canvas.addEventListener('click', function() {
-        if (gameRunning && !gamePaused) {
+        if (!gameRunning && !gameOver) {
+            // 点击画布也可以开始游戏
+            startGame();
+        } else if (gameRunning && !gamePaused) {
             jump();
         }
     });
 
-    // 触摸控制（手机优化）- 游戏开始后才响应
-    canvas.addEventListener('touchstart', function(e) {
+    // 触摸控制（手机优化）- 使用 touchend 而不是 touchstart
+    canvas.addEventListener('touchend', function(e) {
         e.preventDefault();
+        e.stopPropagation();
 
-        if (gameRunning && !gamePaused) {
+        console.log('画布触摸结束 - 游戏状态:', gameRunning, gameOver);
+
+        if (!gameRunning && !gameOver) {
+            // 触摸画布开始游戏
+            startGame();
+            console.log('开始游戏！');
+        } else if (gameRunning && !gamePaused) {
             jump();
+            console.log('跳跃！');
         }
     }, { passive: false });
 
@@ -167,19 +196,62 @@ function setupEventListeners() {
     closeInstructionsBtn = document.getElementById('closeInstructionsBtn');
     instructionsPanel = document.getElementById('instructionsPanel');
 
-    if (startBtn) startBtn.addEventListener('click', startGame);
-    if (restartBtn) restartBtn.addEventListener('click', restartGame);
-    if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
-    if (jumpBtn) jumpBtn.addEventListener('click', jump);
-    if (jumpBtn) jumpBtn.addEventListener('touchstart', function(e) { e.preventDefault(); jump(); });
-    if (dartBtn) dartBtn.addEventListener('click', shootDart);
-    if (dartBtn) dartBtn.addEventListener('touchstart', function(e) { e.preventDefault(); shootDart(); });
+    // 按钮事件 - 同时支持 click 和 touchend
+    if (startBtn) {
+        startBtn.addEventListener('click', startGame);
+        startBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('开始按钮触摸');
+            startGame();
+        });
+    }
+    if (restartBtn) {
+        restartBtn.addEventListener('click', restartGame);
+        restartBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('重新开始按钮触摸');
+            restartGame();
+        });
+    }
+    if (pauseBtn) {
+        pauseBtn.addEventListener('click', togglePause);
+        pauseBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            togglePause();
+        });
+    }
+    if (jumpBtn) {
+        jumpBtn.addEventListener('click', jump);
+        jumpBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('跳跃按钮触摸');
+            jump();
+        });
+    }
+    if (dartBtn) {
+        dartBtn.addEventListener('click', shootDart);
+        dartBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('飞镖按钮触摸');
+            shootDart();
+        });
+    }
     if (instructionsBtn) instructionsBtn.addEventListener('click', function() {
         instructionsPanel.style.display = 'block';
     });
     if (closeInstructionsBtn) closeInstructionsBtn.addEventListener('click', function() {
         instructionsPanel.style.display = 'none';
     });
+
+    // 防止默认触摸行为
+    document.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+    }, { passive: false });
 
     // 防止双击缩放
     document.addEventListener('dblclick', function(e) {

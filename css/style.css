@@ -4,6 +4,9 @@
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 body {
@@ -15,9 +18,10 @@ body {
     justify-content: center;
     align-items: center;
     padding: 10px;
-    touch-action: manipulation;
+    touch-action: none;
     user-select: none;
     -webkit-user-select: none;
+    overscroll-behavior: none;
 }
 
 .container {
@@ -183,13 +187,13 @@ h1 i {
 
 /* 按钮样式 */
 .btn {
-    padding: 12px 25px;
-    font-size: 1rem;
+    padding: 15px 30px;
+    font-size: 1.1rem;
     font-weight: bold;
     border: none;
     border-radius: 50px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -197,6 +201,10 @@ h1 i {
     text-transform: uppercase;
     letter-spacing: 1px;
     touch-action: manipulation;
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 50px;
+    min-width: 100px;
 }
 
 .btn i {
@@ -244,35 +252,48 @@ h1 i {
     background: linear-gradient(to right, #9C27B0, #673AB7);
     color: white;
     box-shadow: 0 5px 10px rgba(156, 39, 176, 0.3);
-    padding: 10px 20px;
-    font-size: 0.95rem;
+    padding: 12px 24px;
+    font-size: 1rem;
     min-width: 100px;
+    min-height: 50px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
-.control-btn:hover, .control-btn:active {
+.control-btn:active {
     background: linear-gradient(to right, #7B1FA2, #512DA8);
-    transform: translateY(-2px);
+    transform: scale(0.95);
 }
 
-/* 跳跃按钮 - 更显眼 */
+/* 跳跃按钮 - 更显眼更大 */
 .jump-btn {
     background: linear-gradient(to right, #f44336, #E91E63);
     box-shadow: 0 5px 15px rgba(244, 67, 54, 0.5);
-    min-width: 120px;
-    font-size: 1.1rem;
+    min-width: 140px;
+    min-height: 60px;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
-.jump-btn:hover, .jump-btn:active {
+.jump-btn:active {
     background: linear-gradient(to right, #d32f2f, #C2185B);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(244, 67, 54, 0.7);
+    transform: scale(0.95);
 }
 
 /* 飞镖按钮 */
 .dart-btn {
     background: linear-gradient(to right, #FF5722, #FF9800);
     box-shadow: 0 5px 15px rgba(255, 87, 34, 0.5);
-    min-width: 120px;
+    min-width: 140px;
+    min-height: 60px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.dart-btn:active {
+    background: linear-gradient(to right, #E64A19, #F57C00);
+    transform: scale(0.95);
 }
 
 .dart-btn:hover, .dart-btn:active {
