@@ -9,7 +9,7 @@ let gameOver = false;
 let score = 0;
 let highScore = localStorage.getItem('monkeyJumpHighScore') || 0;
 let speed = 1.0;
-let gameSpeed = 5;
+let gameSpeed = 3.5;
 let frames = 0;
 
 // Game objects
@@ -27,17 +27,24 @@ let monkey = {
 
 let hippos = [];
 let hippoSpawnRate = 100; // frames between hippo spawns
-let hippoMinHeight = 250;
-let hippoMaxHeight = 320;
+let hippoFixedHeight = 310; // Fixed height for hippos on ground
 
 // Images
 let monkeyImg, hippoImg;
 let imagesLoaded = false;
 
+// Dart (projectile) system
+let darts = [];
+let dartCooldown = 0; // 0 = ready to shoot
+let dartCooldownMax = 180; // 3 seconds at 60fps
+let dartSpeed = 12;
+let dartWidth = 20;
+let dartHeight = 10;
+
 // DOM elements
 let scoreElement, highScoreElement, speedElement;
 let startScreen, gameOverScreen, finalScoreElement;
-let startBtn, restartBtn, pauseBtn, soundBtn, instructionsBtn, closeInstructionsBtn;
+let startBtn, restartBtn, pauseBtn, soundBtn, dartBtn, instructionsBtn, closeInstructionsBtn;
 let instructionsPanel;
 
 // Initialize game
@@ -125,6 +132,12 @@ function setupEventListeners() {
             togglePause();
         }
 
+        // Shoot dart with 'F' key
+        if (e.code === 'KeyF' && gameRunning && !gamePaused) {
+            shootDart();
+            e.preventDefault();
+        }
+
         // Restart game on 'R' key when game over
         if (e.code === 'KeyR' && gameOver) {
             restartGame();
@@ -145,6 +158,7 @@ function setupEventListeners() {
     restartBtn = document.getElementById('restartBtn');
     pauseBtn = document.getElementById('pauseBtn');
     soundBtn = document.getElementById('soundBtn');
+    dartBtn = document.getElementById('dartBtn');
     instructionsBtn = document.getElementById('instructionsBtn');
     closeInstructionsBtn = document.getElementById('closeInstructionsBtn');
     instructionsPanel = document.getElementById('instructionsPanel');
@@ -152,6 +166,7 @@ function setupEventListeners() {
     startBtn.addEventListener('click', startGame);
     restartBtn.addEventListener('click', restartGame);
     pauseBtn.addEventListener('click', togglePause);
+    dartBtn.addEventListener('click', shootDart);
 
     // Sound toggle (placeholder - no actual sound implementation)
     soundBtn.addEventListener('click', function() {
@@ -192,6 +207,10 @@ function startGame() {
     // Clear hippos
     hippos = [];
 
+    // Clear darts and reset cooldown
+    darts = [];
+    dartCooldown = 0;
+
     // Update UI
     startScreen.style.display = 'none';
     gameOverScreen.style.display = 'none';
@@ -230,6 +249,26 @@ function jump() {
     }
 }
 
+// Shoot a dart
+function shootDart() {
+    if (!gameRunning || gamePaused || gameOver) return;
+
+    // Check cooldown
+    if (dartCooldown > 0) return;
+
+    // Create a new dart at monkey's position
+    darts.push({
+        x: monkey.x + monkey.width,
+        y: monkey.y + monkey.height / 2 - dartHeight / 2,
+        width: dartWidth,
+        height: dartHeight,
+        active: true
+    });
+
+    // Start cooldown (3 seconds = 180 frames at 60fps)
+    dartCooldown = dartCooldownMax;
+}
+
 // Update game state
 function update() {
     if (!gameRunning || gamePaused || gameOver) return;
@@ -266,6 +305,39 @@ function update() {
         }
     }
 
+    // Update darts
+    if (dartCooldown > 0) {
+        dartCooldown--;
+    }
+
+    // Update darts position and check collisions with hippos
+    for (let i = darts.length - 1; i >= 0; i--) {
+        // Move dart
+        darts[i].x += dartSpeed;
+
+        // Remove darts that are off screen
+        if (darts[i].x > canvas.width) {
+            darts.splice(i, 1);
+            continue;
+        }
+
+        // Check dart collision with hippos
+        for (let j = hippos.length - 1; j >= 0; j--) {
+            if (darts[i].x < hippos[j].x + hippos[j].width &&
+                darts[i].x + darts[i].width > hippos[j].x &&
+                darts[i].y < hippos[j].y + hippos[j].height &&
+                darts[i].y + darts[i].height > hippos[j].y) {
+
+                // Dart hits hippo - remove both
+                darts.splice(i, 1);
+                hippos.splice(j, 1);
+                score += 2; // Bonus points for shooting hippo
+                updateScore();
+                break; // This dart is gone, move to next dart
+            }
+        }
+    }
+
     // Check collisions
     checkCollisions();
 
@@ -281,11 +353,10 @@ function update() {
 
 // Spawn a new hippo
 function spawnHippo() {
-    let hippoHeight = Math.floor(Math.random() * (hippoMaxHeight - hippoMinHeight)) + hippoMinHeight;
-
+    // Hippos now appear only on the ground (fixed height)
     hippos.push({
         x: canvas.width,
-        y: hippoHeight,
+        y: hippoFixedHeight,
         width: 100,
         height: 60
     });
@@ -366,6 +437,16 @@ function draw() {
             ctx.fillRect(hippo.x + 80, hippo.y + 20, 10, 10); // eye
             ctx.fillRect(hippo.x + 20, hippo.y + 40, 60, 10); // mouth
         }
+    }
+
+    // Draw darts
+    for (let dart of darts) {
+        ctx.fillStyle = '#FF0000';
+        ctx.fillRect(dart.x, dart.y, dart.width, dart.height);
+
+        // Draw dart tip
+        ctx.fillStyle = '#FF9900';
+        ctx.fillRect(dart.x + dart.width - 5, dart.y, 5, dart.height);
     }
 
     // Draw clouds in background if game is running
