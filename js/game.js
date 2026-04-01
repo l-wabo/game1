@@ -11,7 +11,7 @@ let highScore = localStorage.getItem('monkeyJumpHighScore') || 0;
 let speed = 1.0;
 let frames = 0;
 
-// 游戏对象 - 猴子（增强跳跃能力）
+// 游戏对象 - 猴子
 let monkey = {
     x: 80,
     y: 280,
@@ -19,8 +19,8 @@ let monkey = {
     height: 80,
     jumping: false,
     jumpVelocity: 0,
-    jumpStrength: -25,    // 强跳跃力
-    gravity: 0.5,         // 低重力 = 更长滞空
+    jumpStrength: -20,    // 跳跃力度（已调低）
+    gravity: 0.6,         // 重力（已调高，减少滞空）
     groundY: 280
 };
 
@@ -109,8 +109,12 @@ function loadImages() {
 function setupEventListeners() {
     // 键盘控制
     document.addEventListener('keydown', function(e) {
+        // 游戏未开始时，只有按回车或空格才开始
         if (!gameRunning && !gameOver) {
-            startGame();
+            if (e.code === 'Enter' || e.code === 'Space') {
+                startGame();
+                e.preventDefault();
+            }
             return;
         }
 
@@ -137,29 +141,18 @@ function setupEventListeners() {
         }
     });
 
-    // 点击画布跳跃
-    canvas.addEventListener('click', function(e) {
-        if (!gameRunning && !gameOver) {
-            startGame();
-        } else if (gameRunning && !gamePaused) {
-            // 检查是否点击了飞镖按钮区域
-            const rect = canvas.getBoundingClientRect();
-            const clickY = e.clientY - rect.top;
-
-            // 如果点击的是画布下半部分，跳跃
-            if (clickY > rect.height * 0.3) {
-                jump();
-            }
+    // 点击画布跳跃（游戏开始后）
+    canvas.addEventListener('click', function() {
+        if (gameRunning && !gamePaused) {
+            jump();
         }
     });
 
-    // 触摸控制（手机优化）
+    // 触摸控制（手机优化）- 游戏开始后才响应
     canvas.addEventListener('touchstart', function(e) {
         e.preventDefault();
 
-        if (!gameRunning && !gameOver) {
-            startGame();
-        } else if (gameRunning && !gamePaused) {
+        if (gameRunning && !gamePaused) {
             jump();
         }
     }, { passive: false });
